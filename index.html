@@ -7,13 +7,25 @@
 
     <title>Portrait - A JavaScript Benchmarking Utility</title>
     
-    <script type="text/javascript" src="Benchmark.js" charset="utf-8"></script>
+    <script type="text/javascript" src="core_extensions.js" charset="utf-8"></script>
+    <script type="text/javascript" src="benchmark.js" charset="utf-8"></script>
     
 </head>
 
 <body>
 
     <h1>This Is Only A Test</h1>
+    
+    <script type="text/javascript" charset="utf-8">
+        
+        Benchmark.benchmark({
+            sort : function() { for (i=0; i<100000000; i++) { } },
+            splat : function() { [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15].forEach(function(value) { }); },
+            cow : function() { [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15].forEach(function(value) { }); },
+            moodasdasdasdasd : function() { [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15].forEach(function(value) { }); }
+        });
+        
+    </script>
 
 </body>
 </html>

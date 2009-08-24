@@ -49,16 +49,28 @@ Benchmark = {
     // Label for the benchmark
     label : null,
     
+    // What type of parameter was passed in (object, function, integer)
+    type : null,
+    
     // How many times to run the benchmark
     repeat : 1,
+    
+    // Number of characters in the longest result
+    longest : 0,
+    
+    // Total time it took for all tests in a group
+    total : 0.000000,
     
     // Benchmarks and their execution time
     results : {},
     
+    // What will be displayed in STDOUT
+    output : '',
+    
     /**
      * call-seq:
-     *     Benchmark.benchmark(function(){ })
-     *     Benchmark.benchmark("label", function(){ })
+     *     Benchmark.benchmark(function(){ }) --> Benchmark
+     *     Benchmark.benchmark("label", function(){ }) --> Benchmark
      *
      * Invokes the measurement function and records how long it takes to complete the operation.
      * Arguments can either be in the order of `label, function` or simply `function` if you 
@@ -71,11 +83,20 @@ Benchmark = {
      */
     benchmark : function(label, measurement) {
         args = arguments;
+        
+        // Reset all attributes
+        this.label   = null;
+        this.repeat  = 1;
+        this.longest = 0;
+        this.results = {};
+        this.type    = null;
+        this.total   = 0.000000;
 
         switch( typeof args[0] ) {
             
             // Benchmark.benchmark("label", ...)
             case "string":
+                this.type = "label";
                 this.label = args[0];
                 // Benchmark.benchmark("label", 1000, ...)
                 if ( typeof args[1] == "number" ) {
@@ -105,6 +126,7 @@ Benchmark = {
             // Repeat the benchmark 1000 times and total up how long each one took.
             // Benchmark.benchmark(1000, function(){ })
             case "number":
+                this.type = "repeat";
                 this.repeat = args[0];
                 if (typeof args[1] == "function") {
                     measurement = [ args[1] ];
@@ -116,18 +138,24 @@ Benchmark = {
             
             // Run a single benchmark only outputing the execution duration
             case "function":
+                this.type = "function";
+                this.repeat = 1;
                 this.label = null;
                 measurement = [ args[0] ];
                 break;
             
             // Run a series of benchmarks sequentially
             case "object":
+                this.type = "bobject";
+                this.repeat = 1;
                 this.label = null;
-                measurement = [ args[0] ];
+                measurement = args[0];
                 break;
             
             // Any other types are invalid
             default:
+                this.type = "failure";
+                this.repeat = 1;
                 Error.throw( ArgumentError, "Invalid argument type." );
                 return;
                 break;
@@ -135,38 +163,101 @@ Benchmark = {
         
         this.start( measurement );
         this.report();
+        return this;
     },
     
+    /**
+     * call-seq:
+     *     Benchmark.start(Array) --> null
+     *     Benchmark.start(Object) --> null
+     *
+     * Runs each benchmark through the `measure` method and collects the results
+     * in `this.results`. Results are parsed into Float. Single benchmarks are turned
+     * into an Array with a single element so `start` can just loop over measurements
+     * no matter what type of Benchmark the user is performing.
+     *
+     * Options
+     * =======
+     * `measurements`:    An array or object of benchmarks to run.
+     */
     start : function(measurements) {
         for (m in measurements) {
-            this.results[m] = parseFloat(0);
+            this.results[m] = 0;
             for (i = 0; i <= this.repeat; i++) {
-                console.log("Testing...");
                 this.results[m] += parseFloat( this.measure( measurements[m] ));
             }
         }
     },
     
+    /**
+     * Measures how long (in seconds) how long the `block` takes to run.
+     *
+     * Options
+     * =======
+     * `block`:    The function which contains the code to measure
+     */
     measure : function(block) {
         start = new Date().getTime();
         block();
         end = new Date().getTime();
-        return ((end - start) / 1000).toPrecision(7);
+        
+        this.total += (end - start) / 1000;
+        return (end - start) / 1000;
     },
     
-    report : function() {
-        printline = '';
-        if (this.results[0]) {
-            if (this.label) {
-                printline += this.label + ": ";
-            }
-            console.log( printline + "(   " + this.results[0] + ")" );
-        } else {
-            // MAKE "----" stretch the length of longest results line
-            for (r in this.results) {
-                console.log( r + ": (   " + this.results[r] + ")" );
+    /**
+     * Formats the results into a way that can be displayed easily and user-friendly
+     */
+    format_results : function() {
+        for (r in this.results) {
+            this.results[r] = parseFloat( this.results[r] ).toString();
+            if ( (r.length + this.results[r].length + 7) > this.longest ) { 
+                this.longest = r.length + this.results[r].length + 7;
             }
         }
-    }
+    },
     
+    /**
+     * Outputs the formatted results to STDOUT. By default, STDOUT is `console`.
+     */
+    report : function() {
+        this.format_results();
+        if (this.type == "bobject") this.group_top_line();
+        
+        for ( r in this.results ) {
+            this.output += (r.rjust(this.longest - 7) + ": (   " + this.decimals(this.results[r]) + ")").rjust( this.longest ) + "\n";
+        }
+        
+        if (this.type == "bobject") this.group_total_line();
+        
+        console.log(this.output);
+    },
+    
+    /**
+     * Creates the top line of dashes for a sequential, object benchmark
+     */
+    group_top_line : function() {
+        this.output += "-".repeat( this.longest + 5 ) + "\n";
+    },
+    
+    /**
+     * Creates the bottom line of dashes and the total time for a sequential, object benchmark.
+     */
+    group_total_line : function() {
+        this.output += "-".repeat( this.get_padding() ) + " total: " + this.total + "";
+    },
+    
+    /**
+     * Calculates the padding needed to align results to the right.
+     */
+    get_padding : function() {
+        padding = ( (this.longest + 5) - (this.total.toString().length + 8));
+        padding = padding < 0 ? this.longest : padding;
+        return padding;
+    },
+    
+    decimals : function() {
+        
+    }
+       
 }
