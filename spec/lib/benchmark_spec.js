@@ -31,9 +31,15 @@ describe 'Benchmark'
     Benchmark.STDOUT.messages.should.match /Measurement name/
   end
   
-  it 'should repeat a test n number of times'
+  it 'should repeat a test `n` number of times'
     Benchmark.benchmark(1000, function() { for (i in 100000000) {} })
     Benchmark.repeat.should.be 1000
+  end
+  
+  it 'should display a label and run `n` number of times'
+    Benchmark.benchmark('For loop 1000 times', 1000, function() { for (i in 100000000) {} })
+    Benchmark.repeat.should.be 1000
+    Benchmark.STDOUT.messages.should.match /For loop 1000 times/
   end
 
 end
