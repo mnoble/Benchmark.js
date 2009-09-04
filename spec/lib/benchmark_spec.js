@@ -2,6 +2,11 @@ describe 'Benchmark'
   
   before
     Output = function() { this.messages = ''; this.log = function(msg) { this.messages += msg; }}
+    helper = SpecHelper
+  end
+  
+  after
+    if (console) { console.log(Benchmark.STDOUT.messages) }
   end
   
   before_each
@@ -40,6 +45,16 @@ describe 'Benchmark'
     Benchmark.benchmark('For loop 1000 times', 1000, function() { for (i in 100000000) {} })
     Benchmark.repeat.should.be 1000
     Benchmark.STDOUT.messages.should.match /For loop 1000 times/
+  end
+  
+  it 'should display the total execution time if given an object'
+    Benchmark.benchmark(helper.multiple_benchmarks)
+    Benchmark.STDOUT.messages.should.match /total/
+  end
+  
+  it 'should format results to 3 decimal places'
+    Benchmark.benchmark(function() { for (i in 100000000) {} })
+    Benchmark.STDOUT.messages.should.match /\d\.\d{3}/
   end
 
 end

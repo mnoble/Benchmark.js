@@ -6,6 +6,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     
     <link rel="stylesheet" href="jspec/jspec.css" type="text/css" />
+    <script type="text/javascript" src="spec_helper.js" charset="utf-8"></script>
     <script type="text/javascript" src="jspec/jspec.js" charset="utf-8"></script>
     <script type="text/javascript" src="../lib/core_extensions.js" charset="utf-8"></script>
     <script type="text/javascript" src="../lib/benchmark.js" charset="utf-8"></script>
@@ -14,7 +15,11 @@
     
     <script type="text/javascript" charset="utf-8">
         function runSuites() {
-            JSpec.exec('lib/benchmark_spec.js').run().report();
+            JSpec
+            .exec('lib/benchmark_spec.js')
+            .exec('lib/core_extensions_spec.js')
+            .run()
+            .report();
         }
     </script>
 </head>
