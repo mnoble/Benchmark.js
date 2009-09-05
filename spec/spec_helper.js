@@ -8,3 +8,23 @@ SpecHelper = {
     }
     
 }
+
+Output = function() { 
+    
+    this.messages = '';
+    this.warnings = '';
+    this.errors   = '';
+    
+    this.log = function(msg) { 
+        this.messages += msg; 
+    }
+    
+    this.warn = function(msg) {
+        this.warnings += msg;
+    }
+    
+    this.error = function(msg) {
+        this.errors += msg;
+    }
+    
+}

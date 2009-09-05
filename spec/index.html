@@ -10,6 +10,7 @@
     <script type="text/javascript" src="jspec/jspec.js" charset="utf-8"></script>
     <script type="text/javascript" src="../lib/core_extensions.js" charset="utf-8"></script>
     <script type="text/javascript" src="../lib/benchmark.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../lib/exception.js" charset="utf-8"></script>
     
     <title>Benchmark Test Suite</title>
     
@@ -18,8 +19,14 @@
             JSpec
             .exec('lib/benchmark_spec.js')
             .exec('lib/core_extensions_spec.js')
+            .exec('lib/exception_spec.js')
             .run()
             .report();
+            
+            // Reload every 3 seconds (Ghetto AutoTest)
+            setTimeout(function() {
+                history.go(0);
+            }, 3000);
         }
     </script>
 </head>

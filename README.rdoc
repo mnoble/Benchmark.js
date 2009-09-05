@@ -1,29 +1,96 @@
+= Benchmark.js
 
-= YourLib
+Benchmark.js is a small utility to run JavaScript benchmarks. It's based on Ruby's Benchmark module. A lot of the stuff below isn't completely implemented and/or doesn't work at all.
 
-Description
+== Install
 
-== License 
+Copy all the files from <tt>lib/</tt> into whereever you store JavaScript files within your project.
 
-(The MIT License)
 
-Copyright (c) 2009 Your Name <Your Email>
+== Usage
 
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-'Software'), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject to
-the following conditions:
+Benchmark.js has one main method <tt>Benchmark.benchmark()</tt> aliased to <tt>Benchmark.bm()</tt>; I told you it's based on Ruby's Benchmark :)
 
-The above copyright notice and this permission notice shall be
-included in all copies or substantial portions of the Software.
+=== Specifying STDOUT
 
-THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
-TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+If you want to use a custom console or output object you can specify it with <tt>stdout</tt>. This is useful when testing,
+using a custom console like Blackbird or if you want to send the results somewhere.
+
+    Benchmark.initialize({ stdout: log })
+
+where <tt>log</tt> is the output object. The output object must implement the following methods
+
+    log   => General purpose debugging or logging
+    warn  => For warnings
+    error => When throwing an error
+
+=== Single Measurement
+
+    Benchmark.benchmark(function() {
+      for (i = 0; i < 10000000; i++) { }
+    });
+
+Outputs:
+
+    (  7.644)
+
+=== Single Measurement with Label
+
+    Benchmark.benchmark("Iterate 10,000,000 times", function() {
+      for (i = 0; i < 10000000; i++) { }
+    });
+
+Outputs:
+
+    Iterate 10,000,000 times: (   7.149000)
+
+=== Single measurement `n` number of times
+
+    Benchmark.benchmark(1000000, function() {
+      var foo = "something";
+    });
+ 
+Outputs:
+
+    (   7.149)
+
+=== Single measurement `n` number of times with a label
+
+    Benchmark.benchmark('One million times', 1000000, function() {
+      var foo = "something";
+    });
+
+Outputs:
+
+    One million times: (   7.149)
+
+=== Measure Things Sequentially
+
+    group = { toSource : function() { Object.toSource(); },
+              toString : function() { 123456.toString(); }}
+    Benchmark.benchmark(group)
+
+Outputs:
+
+    -----------------------
+    toSource: (   0.123000)
+    toString: (   1.712000)
+    ------- total: 1.835000
+
+In this case the name of each function becomes the label for that measurement. You can add spaces to the name with underscores: <tt>test_something_awesome</tt> becomes <tt>"test something awesome"</tt>. To intentially use an underscore, use two: <tt>i__love__underscores</tt> becomes <tt>"i_love_underscores"</tt>.
+
+
+== License
+
+               DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
+                       Version 2, December 2004
+    
+    Copyright (C) 2009 Matte Noble
+    Everyone is permitted to copy and distribute verbatim or modified
+    copies of this license document, and changing it is allowed as long
+    as the name is changed.
+    
+               DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
+      TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
+    
+    0. You just DO WHAT THE FUCK YOU WANT TO.

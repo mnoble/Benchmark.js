@@ -1,7 +1,6 @@
 describe 'Benchmark'
   
   before
-    Output = function() { this.messages = ''; this.log = function(msg) { this.messages += msg; }}
     helper = SpecHelper
   end
   
