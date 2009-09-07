@@ -12,4 +12,12 @@ describe 'String'
     "this_is_a_sentence".spacify().should.equal "This Is A Sentence"
   end
   
+  it 'should escape double underscores'
+    "this__is__a__sentance".spacify().should.equal "this_is_a_sentance"
+  end
+  
+  it 'should conver a mix of underscores and escaped underscores'
+    "this__is_a__sentence".spacify().should.equal "this_is a_sentence"
+  end
+  
 end

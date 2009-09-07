@@ -18,19 +18,24 @@ describe 'Benchmark'
   end
 
   describe 'being created'
+    
+    it 'should throw an error when STDOUT doesnt implement log, warn and error'
+      out = { log : function() {} }
+      Benchmark.initialize({ stdout: out }).should.throw_error
+    end
+    
+    it 'should be an object'
+      typeof Benchmark.should.be "object"
+    end
   
-      it 'should be an object'
-        typeof Benchmark.should.be "object"
-      end
+    it 'should allow the user to specify STDOUT'
+      Benchmark.STDOUT.should.be_an Output
+    end
   
-      it 'should allow the user to specify STDOUT'
-        Benchmark.STDOUT.should.be_an Output
-      end
-  
-      it 'should output to the STDOUT passed into initialize'
-        Benchmark.benchmark(function() {})
-        Benchmark.STDOUT.messages.should.not.be_empty
-      end
+    it 'should output to the STDOUT passed into initialize'
+      Benchmark.benchmark(function() {})
+      Benchmark.STDOUT.messages.should.not.be_empty
+    end
   
   end
   

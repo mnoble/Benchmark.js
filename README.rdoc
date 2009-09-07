@@ -4,8 +4,7 @@ Benchmark.js is a small utility to run JavaScript benchmarks. It's based on Ruby
 
 == Install
 
-Copy all the files from <tt>lib/</tt> into whereever you store JavaScript files within your project.
-
+Copy all the files from <tt>lib/</tt> into <tt>public/javascript/benchmark'</tt> or where ever your JavaScript files go.
 
 == Usage
 
@@ -78,7 +77,6 @@ Outputs:
     ------- total: 1.835000
 
 In this case the name of each function becomes the label for that measurement. You can add spaces to the name with underscores: <tt>test_something_awesome</tt> becomes <tt>"test something awesome"</tt>. To intentially use an underscore, use two: <tt>i__love__underscores</tt> becomes <tt>"i_love_underscores"</tt>.
-
 
 == License
 
